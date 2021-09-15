@@ -1,0 +1,20 @@
+{{ block title }}
+    Enter your information
+{{ endblock }}
+{{ block content }}
+
+<p>
+    Number of rounds: {{Constants.num_rounds}}
+    BASE CLASS
+</p>
+
+<p>{{img}}</p>
+<p>{{page}}</p>
+
+<p>Please enter the following information.</p>
+
+    {{ formfields }}
+
+    {{ next_button }}
+
+{{ endblock }}
