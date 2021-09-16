@@ -1,3 +1,5 @@
+<link rel="stylesheet" href="/static/global/empty.css">
+
 {{ block title }}
     Enter your information
 {{ endblock }}
@@ -5,11 +7,16 @@
 
 <p>
     Number of rounds: {{Constants.num_rounds}}
-    BASE CLASS
 </p>
 
-<p>{{img}}</p>
-<p>{{page}}</p>
+<!-- <p>Page player:   {{player.page_number}}</p> -->
+<!-- <p>Image player:  {{player.image}}</p> -->
+
+<div >
+    <img class="question_img"
+        src="/static/img/{{player.image}}"
+        alt="Image of question {{player.page_number}}">
+</div>
 
 <p>Please enter the following information.</p>
 
