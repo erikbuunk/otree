@@ -1,0 +1,120 @@
+{% extends "global/Page.html" %}
+{% load otree static %}
+
+{% block title %}
+
+    <h4>
+        Part 1 - Comprehension Questions
+    </h4>
+
+{% endblock %}
+
+
+{% block content %}
+
+<p><br> Please answer a few questions about the procedures described in the instructions so far. If you want to look up
+    information in the instructions, you can press the “Instructions” button at the bottom of the screen.</p>
+
+<p>For each of the following statements, please indicate whether it is true or false. Once you answered all the
+    questions correctly, you can proceed.</p>
+
+<p class="margin">If I do not submit any answer to a general knowledge question within {{Constants.answertime}} seconds,
+    I will certainly not be paid for it.</p>
+<input type="radio" name="q_comprehension1" value="True">
+True
+<input type="radio" name="q_comprehension1" value="False">
+False
+
+<p class="margin">For each <b>correct</b> answer I will earn at least {{Constants.low_pr}} GBP.</p>
+<input type="radio" name="q_comprehension2" value="True">
+True
+<input type="radio" name="q_comprehension2" value="False">
+False
+
+<p class="margin">To earn an additional {{Constants.confidence_pay}} GBP, I need to enter my most accurate estimate of
+    the chance that my answer is correct. If I am not certain that I have answered correctly, I can enter a low
+    estimate. This will give me a high chance of securing the additional payment. Likewise, if I am certain that I have
+    answered correctly, I can enter a high estimate. This will give me a high chance of securing the additional payment.</p>
+<input type="radio" name="q_comprehension3" value="True">
+True
+<input type="radio" name="q_comprehension3" value="False">
+False
+
+<p> <br> Please press the "Continue"-Button to proceed. <br> </p>
+<p> </p>
+<p>
+<button class="otree-btn-next btn btn-primary">Continue</button>
+
+  <a class="btn btn-success" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+    Instructions
+  </a>
+</p>
+
+
+<div class="collapse" id="collapseExample">
+  <div class="card card-body">
+
+    {% if player.participant.quiztype == 1 %}
+      <p>You will answer a sequence of 10 questions in the field of Arts and Literature.</p>
+    {% elif player.participant.quiztype == 2 %}
+      <p>You will answer a sequence of 10 questions in the field of Psychology and Linguistics.</p>
+    {% elif player.participant.quiztype == 3 %}
+      <p>You will answer a sequence of 10 questions in the field of Science and Technology.</p>
+    {% elif player.participant.quiztype == 4 %}
+      <p>You will answer a sequence of 10 questions in the field of History and Politics.</p>
+    {% endif %}
+
+    <p>The questions are structured in the following way: you will see a question and five possible answers one of which is
+    correct. You can submit the answer to a question by selecting an answer option and submitting it by pressing the
+    “Submit”-Button. Once submitted, you will not be able to return to a question and revise your answer.  </p>
+
+    <p>For each <b>correctly answered question</b> you will receive a piece rate of at least <b>{{Constants.low_pr}} GBP</b>
+    and potentially more.</p>
+
+      <p><b>To answer each question</b>, you will have <b>{{Constants.answertime}} seconds</b>. A timer on your screen will
+    show the remaining time (see the example above). Once you submitted an answer or the {{Constants.answertime}}
+    seconds are up, you will automatically advance to the next question. </p>
+
+    <p>If you do not submit an answer to a question within the {{Constants.answertime}} seconds, this question will not be evaluated for payment.
+    Therefore, <i>even if you do not know the correct answer with certainty, we encourage you to submit the answer you
+        consider most likely to be correct before the timeout.</i> Please do not forget to click the submit button after
+    you chose an answer option.</p>
+
+    <p>At the end of the study, you will learn how many questions you have answered correctly. You can also learn the
+    correct answers for all the questions if you are interested.</p>
+
+<p>The estimate you enter determines how accurate the computer program is supposed to be to be allowed to replace your
+    answer. As you only want the computer program to replace your answer if it is <i>more</i> likely to submit a correct
+    answer than yourself, you should enter your best estimate of how likely your own answer is to be correct. That is,
+    reporting your most accurate guess of the chance that your chosen answer is correct secures you the largest chance
+    of earning an additional {{Constants.confidence_pay}} GBP bonus.</p>
+
+<p> In other words, if you think that the chance is <i>low</i> that you have submitted the correct answer, you should indicate
+    this by entering a <i>low</i> number in the box, if you want to secure a larger chance of earning
+    {{Constants.confidence_pay}} GBP. If, you think, however, that the chance is medium or high, you should indicate
+    this by entering a medium or high number in the box to secure the largest chance of earning
+    {{Constants.confidence_pay}} GBP from this part of the study.</p>
+
+  </div>
+</div>
+
+
+
+
+
+
+
+<style>
+
+    .otree-btn-next {
+        width:150px;
+        border: 1px solid black;
+        background-color: #ffde00;
+        color: black;
+        float: right;
+    }
+
+</style>
+
+
+{% endblock %}

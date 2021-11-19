@@ -1,0 +1,69 @@
+{% extends "global/Page.html" %}
+{% load otree static %}
+
+
+{% block title %}
+
+    <h4>
+        Part 1 — General Knowledge Questions
+    </h4>
+
+{% endblock %}
+
+{% block content %}
+
+{% if quiztype == 1 %}
+
+<p><br>You will answer a sequence of 10 questions in the field of <b>Arts and Literature</b>.</p>
+
+{% elif quiztype == 2 %}
+
+<p><br>You will answer a sequence of 10 questions in the field of <b>Psychology and Linguistics</b>.</p>
+
+{% elif quiztype == 3 %}
+
+<p><br>You will answer a sequence of 10 questions in the field of <b>Science and Technology</b>.</p>
+
+{% elif quiztype == 4 %}
+
+<p><br>You will answer a sequence of 10 questions in the field of <b>History and Politics</b>.</p>
+
+{% endif %}
+
+<p>The questions are structured in the following way: you will see a question, a corresponding image and five possible answers one of which is
+    correct. <br>
+    You can submit the answer to a question by selecting an answer option and submitting it by pressing the
+    “Continue”-Button. Once submitted, you will not be able to return to a question and revise your answer.  </p>
+
+<p>For each <b>correctly answered question</b> you will receive a piece rate of at least <b>{{Constants.low_pr}} GBP</b>
+    and potentially more. Further details on this will be given shortly. </p>
+
+<p>The screenshot below shows an example of how a question will look like on your screen:</p>
+
+{% if quiztype == 3 %}
+
+ <div style="text-align:center">
+<img src="{% static 'Employee/Example_SciTech1.png' %}" width ="60%" />
+     </div>
+
+{% endif %}
+
+<p><b>To answer each question</b>, you will have <b>{{Constants.answertime}} seconds</b>. A timer on your screen will
+    show the remaining time (see the example above). Once you submitted an answer or the {{Constants.answertime}}
+    seconds are up, you will automatically advance to the next question. </p>
+
+<p>If you do not submit an answer to a question within the {{Constants.answertime}} seconds, this question will not be evaluated for payment.
+    Therefore, <i>even if you do not know the correct answer with certainty, we encourage you to submit the answer you
+        consider most likely to be correct before the timeout.</i> Please do not forget to click the "Continue"-Button after
+    you chose an answer option to submit it.</p>
+
+<p>At the end of the study, you will learn how many questions you have answered correctly. You can also learn the
+    correct answers for all the questions if you are interested.</p>
+
+<p> Please press the "Continue"-Button to proceed.</p>
+
+<p>
+<button class="otree-btn-next btn btn-primary">Continue</button>
+</p>
+
+{% endblock %}

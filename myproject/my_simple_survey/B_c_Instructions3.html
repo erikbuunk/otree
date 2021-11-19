@@ -1,0 +1,80 @@
+{% extends "global/Page.html" %}
+{% load otree static %}
+
+{% block title %}
+
+    <h4>
+        Part 1 — Likelihood of having answered correctly
+    </h4>
+
+{% endblock %}
+
+{% block content %}
+
+<p><br>After you have submitted your answer to a question, you will be asked to indicate how likely it is that your chosen
+    answer is correct. Below is an example. For providing your true estimate, you can earn additional
+    {{Constants.confidence_pay}} GBP. </p>
+<p>The screenshot below shows an example of how this task will look like on your screen:</p>
+
+{% if player.participant.quiztype == 3 %}
+
+ <div style="text-align:center">
+<img src="{% static 'Employee/Example_SciTech2.png' %}" height = "110%" width ="90%" />
+     </div>
+
+{% endif %}
+
+<h4>Your Estimate </h5>
+<p> For each of the 10 questions, you provide your estimate by entering an integer number between 0 and 100 into the statement: “I am __ % certain that
+    my answer is correct.”. Higher numbers indicate that you assign your answer a higher a chance of being correct. </p>
+
+<h5> Payment Rule </h5>
+<p> At the end of the study <b>one</b> of your 10 estimates will be randomly selected and evaluated for payment. The selected estimate
+    influences your chance of earning <b>{{Constants.confidence_pay}} GBP</b> from this part of the study.</p>
+
+<p><i>*** The payment rule is designed such that you have the largest chance of earning additional
+    {{Constants.confidence_pay}} GBP by reporting your most accurate guess of the likelihood that your chosen answer is
+    correct.*** </i></p>
+
+<p>You will be awarded additional {{Constants.confidence_pay}} GBP if the selected answer to the question is correct.
+    Yet, for this part either your answer or the answer of a special computer program will be used. </p>
+
+<h5> Computer Program </h5>
+ <p>   The program selects the correct answer with a certain likelihood that can be as low as “certainly the wrong answer is selected”
+    (0 % likelihood) or as high as “certainly the correct answer is selected” (100 % likelihood) or any value in between
+    0, 1, 2, 3, …., 97, 98, 99, 100%. Each of these 101 levels of accuracy of the computer program is
+    <i>equally likely</i> and therefore there is only a 1/101 chance that the computer will select the correct answer
+    with certainty. </p>
+
+<p>The estimate you enter determines how accurate the computer program is supposed to be to be allowed to replace your
+    answer. As you only want the computer program to replace your answer if it is <i>more</i> likely to submit a correct
+    answer than yourself, you should enter your best estimate of how likely your own answer is to be correct. That is,
+    reporting your most accurate guess of the chance that your chosen answer is correct secures you the largest chance
+    of earning an additional {{Constants.confidence_pay}} GBP bonus.</p>
+
+<p>If you would like to know more about the exact payment rule, this information is available at the end of the
+    study. </p>
+
+<p> In other words, if you think that the chance is <i>low</i> that you have submitted the correct answer, you should indicate
+    this by entering a <i>low</i> number in the box, if you want to secure a larger chance of earning
+    {{Constants.confidence_pay}} GBP. If, you think, however, that the chance is medium or high, you should indicate
+    this by entering a medium or high number in the box to secure the largest chance of earning
+    {{Constants.confidence_pay}} GBP from this part of the study.</p>
+
+<h5> Further Remarks </h5>
+<p>Again, this task is <i>timed</i>. You will have {{Constants.confidencetime}} seconds to enter your most accurate estimate of
+    the chance that your chosen answer is correct. If you did not submit an estimate before the timeout and this
+    question was randomly chosen, you would be paid no additional GBP.</p>
+
+<p>What estimate is relevant for the award of the bonus will be determined only after you entered the estimates for all
+    10 questions. As each question is equally likely to be chosen, you should treat each estimate as the one,
+    that can earn you an additional {{Constants.confidence_pay}} GBP because this may be the case. </p>
+
+<p> Please press the "Continue"-Button to proceed.</p>
+
+
+<p>
+<button class="otree-btn-next btn btn-primary">Continue</button>
+</p>
+
+{% endblock %}

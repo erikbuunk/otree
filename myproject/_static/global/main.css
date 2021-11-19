@@ -13,3 +13,13 @@
         color: black;
         float: right;
     }
+
+
+    h4 {
+    text-align: center
+    }
+
+.margin {
+    margin-top: 30px;
+    margin-bottom: 20px;
+}
