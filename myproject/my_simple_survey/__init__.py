@@ -1,4 +1,6 @@
 import csv
+import random
+
 from otree.api import *
 
 doc = """
@@ -40,6 +42,13 @@ class Subsession(BaseSubsession):
 class Group(BaseGroup):
     pass
 
+def eliminate_options(choices, correct_option):
+    correct = choices.pop(int(correct_option))
+    choices.pop(0)
+    random_option = random.choice(choices)
+    eliminated=[correct, random_option]
+    print(choices, "->", eliminated)
+    return(eliminated)
 
 class Player(BasePlayer):
     # helper variables - not used in survey
@@ -49,20 +58,53 @@ class Player(BasePlayer):
     # Survey variables
     csv_data = read_csv()
     for row in csv_data:
-        locals()[f"q{row['question_nr_exp']}"] = models.StringField(
-            choices=[row['A'], row['B'], row['C'], row['D'], row['E']],
+        choices = [[0, "No Answer"],[1, row['A']], [2, row['B']], [3,row['C']], [4,row['D']], [5,row['E']]]
+        all_options = models.StringField(
+            choices=choices,
             widget=widgets.RadioSelectHorizontal,
             initial=0,
             label=row["label_text"]
         )
 
+        # q123
+        locals()[f"q{row['question']}"] = all_options
+
+        #trust_q123
+        locals()[f"trust_q{row['question']}"] = models.IntegerField(initial=0, \
+            label='I am ___ % certain that my answer is correct')
+
+        # # advice and eliminated
+        # # advice_q123
+        locals()[f"advice_q{row['question']}"] = models.StringField(
+            choices=choices,
+            widget=widgets.RadioSelectHorizontal,
+            initial=0,
+            label=row["label_text"]
+        )
+        # seek_advice_q123
+        locals()[f"seek_advice_q{row['question']}"]=models.IntegerField(initial=0)
+        #
+        # # advice_q123_eliminated
+        new_choices = eliminate_options(choices, row['answer'] )
+        subset_options = models.StringField(
+            # TODO: check order
+            choices=new_choices,
+            widget=widgets.RadioSelectHorizontal,
+            initial=0,
+            label=row["label_text"])
+        locals()[f"advice_q{row['question']}_eliminated"]=subset_options
+    del(new_choices)
+    del(subset_options)
+    #
     # remove the temp variables, since they will not be used in the survey
     del(csv_data)
     del(row)
+    del(choices)
+    del(all_options)
 
 
 # PAGES
-class PageTemplate(Page):
+class Question(Page):
     """
     Template page for the questions
     """
@@ -70,7 +112,7 @@ class PageTemplate(Page):
     form_model = 'player'
 
     # Base this page on the the template model
-    template_name = 'my_simple_survey/MyPage.html'
+    template_name = 'my_simple_survey/Question.html'
 
     @staticmethod
     def before_next_page(player: Player, timeout_happened):
@@ -91,6 +133,24 @@ class PageTemplate(Page):
             image=player.image
         )
 
+class Instructions(Page):
+    template_name = 'my_simple_survey/Instructions.html'
+
+class AdviceQuestion(Page):
+    template_name = 'my_simple_survey/AdviceQuestion.html'
+    form_model = 'player'
+
+class AdviceQuestionEliminated(Page):
+    template_name = 'my_simple_survey/AdviceQuestionEliminated.html'
+    form_model = 'player'
+
+
+class Trust(Page):
+    """
+    Template for confidence page
+    """
+    template_name = 'my_simple_survey/Trust.html'
+    form_model = 'player'
 
 class ResultsWaitPage(WaitPage):
     pass
@@ -102,14 +162,41 @@ class Results(Page):
 
 
 # initial pages
-page_sequence = []
+page_sequence = [Instructions]
 
 # print ("Creating page sequence")
-for row in read_csv():
-    form_fields = [f"q{row['question_nr_exp']}"]
-    cl = type(f"Page{row['question_nr_exp']}", (PageTemplate,), {'form_fields': form_fields})
+csv_file = read_csv()
+for row in csv_file:
+    # add survey field
+    form_fields = [f"q{row['question']}"]
+    ## Create a class with (name, template and a dictory of variables/functions)
+    cl = type(f"Page{row['question']}", (Question,), {'form_fields': form_fields})
     page_sequence.append(cl)
+
+    # add Trust
+    form_fields = [f"trust_q{row['question']}"]
+    cl = type(f"Trust{row['question']}", (Trust,), {'form_fields': form_fields})
+    page_sequence.append(cl)
+
+
+## inststructions
+page_sequence.append(Instructions)
+
+## Add advice sequence
+
+for row in csv_file:
+    # Advice question
+    form_fields = [f"advice_q{row['question']}", f"seek_advice_q{row['question']}"]
+    cl = type(f"AdviceQuestion{row['question']}", (AdviceQuestion,), {'form_fields': form_fields})
+    page_sequence.append(cl)
+
+    # AdviceQuestionEliminated
+    form_fields = [f"advice_q{row['question']}_eliminated"]
+    cl = type(f"AdviceQuestionEliminated{row['question']}", (AdviceQuestionEliminated,), {'form_fields': form_fields})
+    page_sequence.append(cl)
+
 
 # add additional pages
 page_sequence.append(Results)
 
+print(page_sequence)
