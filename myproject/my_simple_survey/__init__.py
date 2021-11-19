@@ -2,10 +2,26 @@ import os
 import csv
 from otree.api import *
 
-
 doc = """
 Demo of Simple Survey with Images per Question
 """
+
+# read csv
+def read_csv():
+    local_csv=[]
+    with open('my_simple_survey/questions_bak.csv') as csvfile:
+        csv_file = csv.reader(csvfile, delimiter=';')
+        for i, line in enumerate(csv_file):
+            tmpDict = {}
+            if i==0:
+                header= line
+            else:
+                for j, f in enumerate(line):
+                    tmpDict[header[j]]=f
+            if tmpDict != {}:
+                local_csv.append(tmpDict)
+    return local_csv
+
 
 
 class Constants(BaseConstants):
@@ -17,6 +33,7 @@ class Constants(BaseConstants):
     # This can be done later by reading a CSV with the data
     images = ["puppy.jpg", "python.jpg"]
 
+
 class Subsession(BaseSubsession):
     pass
 
@@ -26,22 +43,24 @@ class Group(BaseGroup):
 
 
 class Player(BasePlayer):
-
     # helper variables - not used in survey
     page_number = models.IntegerField(initial=0)
     image = models.StringField(initial=Constants.images[0])
 
     # Survey variables
+    csv_data = read_csv()
+    for i in csv_data:
+        locals()[f"question{i['question_nr_exp']}"] = models.StringField(
+            choices=[i['A'], i['B'], i['C'], i['D'], i['E']],
+            widget=widgets.RadioSelectHorizontal,
+            initial=0,
+            label=i["label_text"]
+        )
 
-    for i in range(0,2):
-        locals()[f"name{i}"] = models.StringField(initial="1")
-        locals()[f"age{i}"] = models.IntegerField(initial="1")
-        locals()[f"level{i}"] = models.IntegerField(
-         choices=[1, 2, 3],
-         widget=widgets.RadioSelect,
-         initial=1
-     )
+    # remove the local variables, since they will not be used in the survey
+    del(csv_data)
     del(i)
+
 
 # PAGES
 class PageTemplate(Page):
@@ -56,7 +75,7 @@ class PageTemplate(Page):
     template_name = 'my_simple_survey/MyPage.html'
 
     @staticmethod
-    def before_next_page(player:Player, timeout_happened):
+    def before_next_page(player: Player, timeout_happened):
         """Update pagenumber and image to show"""
         player.page_number = player.page_number + 1
 
@@ -73,6 +92,7 @@ class PageTemplate(Page):
             image=player.image
         )
 
+
 class ResultsWaitPage(WaitPage):
     pass
 
@@ -81,37 +101,31 @@ class Results(Page):
     # No form
     pass
 
-def read_csv()
 
-    # opening the CSV file
-    # directory_path = os.getcwd()
-    # print(directory_path)
-    #
-    # page_sequence = []
-    # questions = []
-    #
-    # with open('my_simple_survey/questions.csv') as csvfile:
-    #     csvFile = csv.reader(csvfile, delimiter=';')
-    #     for i, line in enumerate(csvFile):
-    #         tmpDict = {}
-    #         if i==0:
-    #             header= line
-    #         else:
-    #             # tmpPage = PageTemplate()
-    #             # page_sequence.append(PageTemplate())
-    #             for j, f in enumerate(line):
-    #                 tmpDict[header[j]]=f
-    #             questions.append(tmpDict)
-    #
-
+# opening the CSV file
 page_sequence = []
-for i in range(2):
-    ff = [f'name{i}', f'age{i}', f'level{i}']
 
-    print(ff)
-    cl = type(f"Page{i}", (PageTemplate,), {'form_fields': ff})
+
+
+# for i in range(2):
+#     ff = [f'name{i}', f'age{i}', f'level{i}']
+#
+#     print(ff)
+#     cl = type(f"Page{i}", (PageTemplate,), {'form_fields': ff})
+#     page_sequence.append(cl)
+# page_sequence.append(Results)
+
+csv_data = read_csv()
+print ("Creating page sequence")
+for i in csv_data:
+    ff = [f"question{i['question_nr_exp']}"]
+    cl = type(f"Page{i['question_nr_exp']}", (PageTemplate,), {'form_fields': ff})
     page_sequence.append(cl)
+
+# add results page
 page_sequence.append(Results)
+
+
 print(page_sequence)
 
 # page_sequence = [Page0, Page1, Results]
