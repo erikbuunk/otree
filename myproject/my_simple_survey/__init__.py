@@ -1,3 +1,5 @@
+import os
+import csv
 from otree.api import *
 
 
@@ -15,7 +17,6 @@ class Constants(BaseConstants):
     # This can be done later by reading a CSV with the data
     images = ["puppy.jpg", "python.jpg"]
 
-
 class Subsession(BaseSubsession):
     pass
 
@@ -31,26 +32,16 @@ class Player(BasePlayer):
     image = models.StringField(initial=Constants.images[0])
 
     # Survey variables
-    # We can see if we can define arrays for this that we read from a CSV
 
-    # Variables for Page0
-    name = models.StringField(initial="1")
-    age = models.IntegerField(initial=1)
-    level = models.IntegerField(
-        choices=[1, 2, 3],
-        widget=widgets.RadioSelect,
-        initial=1
-    )
-
-    # Variables for Page1
-    name2 = models.StringField(initial="2")
-    age2 = models.IntegerField(initial=2)
-    level2 = models.StringField(
-        choices=["Yes", "No", "Maybe"],
-        widget=widgets.RadioSelect,
-        initial="Maybe"
-    )
-
+    for i in range(0,2):
+        locals()[f"name{i}"] = models.StringField(initial="1")
+        locals()[f"age{i}"] = models.IntegerField(initial="1")
+        locals()[f"level{i}"] = models.IntegerField(
+         choices=[1, 2, 3],
+         widget=widgets.RadioSelect,
+         initial=1
+     )
+    del(i)
 
 # PAGES
 class PageTemplate(Page):
@@ -58,13 +49,14 @@ class PageTemplate(Page):
     Template page for the questions
     We use this to prevent duplicate code per page
     """
+
     form_model = 'player'
 
     # Base this page on the the template model
     template_name = 'my_simple_survey/MyPage.html'
 
     @staticmethod
-    def before_next_page(player, timeout_happened):
+    def before_next_page(player:Player, timeout_happened):
         """Update pagenumber and image to show"""
         player.page_number = player.page_number + 1
 
@@ -81,17 +73,6 @@ class PageTemplate(Page):
             image=player.image
         )
 
-
-class Page0(PageTemplate):
-    # define with fields need to be filled in this survey page
-    form_fields = ['name', 'age', 'level']
-
-
-class Page1(PageTemplate):
-    # define with fields need to be filled in this survey page
-    form_fields = ['name2', 'age2', 'level2']
-
-
 class ResultsWaitPage(WaitPage):
     pass
 
@@ -100,5 +81,38 @@ class Results(Page):
     # No form
     pass
 
+def read_csv()
 
-page_sequence = [Page0, Page1, Results]
+    # opening the CSV file
+    # directory_path = os.getcwd()
+    # print(directory_path)
+    #
+    # page_sequence = []
+    # questions = []
+    #
+    # with open('my_simple_survey/questions.csv') as csvfile:
+    #     csvFile = csv.reader(csvfile, delimiter=';')
+    #     for i, line in enumerate(csvFile):
+    #         tmpDict = {}
+    #         if i==0:
+    #             header= line
+    #         else:
+    #             # tmpPage = PageTemplate()
+    #             # page_sequence.append(PageTemplate())
+    #             for j, f in enumerate(line):
+    #                 tmpDict[header[j]]=f
+    #             questions.append(tmpDict)
+    #
+
+page_sequence = []
+for i in range(2):
+    ff = [f'name{i}', f'age{i}', f'level{i}']
+
+    print(ff)
+    cl = type(f"Page{i}", (PageTemplate,), {'form_fields': ff})
+    page_sequence.append(cl)
+page_sequence.append(Results)
+print(page_sequence)
+
+# page_sequence = [Page0, Page1, Results]
+# print(page_sequence)
