@@ -10,19 +10,13 @@ Enter your information
     Number of rounds: {{Constants.num_rounds}}
 </p>
 
-<!-- <p>Page player:   {{player.page_number}}</p> -->
-<!-- <p>Image player:  {{player.image}}</p> -->
-
 <div >
     <img class="question_img"
-        src="/static/img/{{player.image}}"
+        src="{{player.image}}"
         alt="Image of question {{player.page_number}}">
 </div>
 
-<p>Please enter the following information.</p>
-
     {{ formfields }}
-
     {{ next_button }}
 
 {{ endblock }}

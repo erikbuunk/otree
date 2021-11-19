@@ -1,4 +1,3 @@
-import os
 import csv
 from otree.api import *
 
@@ -7,9 +6,10 @@ Demo of Simple Survey with Images per Question
 """
 
 # read csv
-def read_csv():
+def read_csv(file_name='my_simple_survey/questions.csv'):
+    """Read the CSV file"""
     local_csv=[]
-    with open('my_simple_survey/questions_bak.csv') as csvfile:
+    with open(file_name) as csvfile:
         csv_file = csv.reader(csvfile, delimiter=';')
         for i, line in enumerate(csv_file):
             tmpDict = {}
@@ -30,8 +30,7 @@ class Constants(BaseConstants):
     num_rounds = 1
 
     # define the images to use for the different questions
-    # This can be done later by reading a CSV with the data
-    images = ["puppy.jpg", "python.jpg"]
+    images=[row["image_link"] for row in read_csv()]
 
 
 class Subsession(BaseSubsession):
@@ -49,24 +48,23 @@ class Player(BasePlayer):
 
     # Survey variables
     csv_data = read_csv()
-    for i in csv_data:
-        locals()[f"question{i['question_nr_exp']}"] = models.StringField(
-            choices=[i['A'], i['B'], i['C'], i['D'], i['E']],
+    for row in csv_data:
+        locals()[f"q{row['question_nr_exp']}"] = models.StringField(
+            choices=[row['A'], row['B'], row['C'], row['D'], row['E']],
             widget=widgets.RadioSelectHorizontal,
             initial=0,
-            label=i["label_text"]
+            label=row["label_text"]
         )
 
-    # remove the local variables, since they will not be used in the survey
+    # remove the temp variables, since they will not be used in the survey
     del(csv_data)
-    del(i)
+    del(row)
 
 
 # PAGES
 class PageTemplate(Page):
     """
     Template page for the questions
-    We use this to prevent duplicate code per page
     """
 
     form_model = 'player'
@@ -86,7 +84,8 @@ class PageTemplate(Page):
             player.image = Constants.images[player.page_number]
 
     def vars_for_template(player):
-        """Return pagenumber and image to the page as a variable"""
+        """Return page number and image to the page as a variable
+        This can be used in the HTML Page"""
         return dict(
             page=player.page_number,
             image=player.image
@@ -102,31 +101,15 @@ class Results(Page):
     pass
 
 
-# opening the CSV file
+# initial pages
 page_sequence = []
 
-
-
-# for i in range(2):
-#     ff = [f'name{i}', f'age{i}', f'level{i}']
-#
-#     print(ff)
-#     cl = type(f"Page{i}", (PageTemplate,), {'form_fields': ff})
-#     page_sequence.append(cl)
-# page_sequence.append(Results)
-
-csv_data = read_csv()
-print ("Creating page sequence")
-for i in csv_data:
-    ff = [f"question{i['question_nr_exp']}"]
-    cl = type(f"Page{i['question_nr_exp']}", (PageTemplate,), {'form_fields': ff})
+# print ("Creating page sequence")
+for row in read_csv():
+    form_fields = [f"q{row['question_nr_exp']}"]
+    cl = type(f"Page{row['question_nr_exp']}", (PageTemplate,), {'form_fields': form_fields})
     page_sequence.append(cl)
 
-# add results page
+# add additional pages
 page_sequence.append(Results)
 
-
-print(page_sequence)
-
-# page_sequence = [Page0, Page1, Results]
-# print(page_sequence)
