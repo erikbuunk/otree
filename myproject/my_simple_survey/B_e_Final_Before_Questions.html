@@ -2,9 +2,7 @@
 {% load otree static %}
 
 {% block title %}
- <h4>
-Part 1 - Summary
- </h4>
+<h4> Part 1 - Summary</h4>
 {% endblock %}
 
 {% block content %}
@@ -13,22 +11,26 @@ Part 1 - Summary
 
 <p>Reminder:</p>
 
-<p>•	For each <b>correctly answered question</b> you will receive a piece rate of at least <b>{{Constants.low_pr}}
-    GBP</b> and potentially more. </p>
-<p>•	You will have {{Constants.answertime}} seconds to answer each question.</p>
-<p>•	If you do not submit an answer to a question within the {{Constants.answertime}} seconds, this question will not
-    be evaluated for payment. Therefore, <i>even if you do not know the correct answer with certainty, we encourage you
+<p>• For each <b>correctly answered question</b> you will receive a piece rate of at least
+    <b>{{Constants.low_pr}}
+        GBP</b> and potentially more. </p>
+<p>• You will have {{Constants.answertime}} seconds to answer each question.</p>
+<p>• If you do not submit an answer to a question within the {{Constants.answertime}} seconds, this
+    question will not
+    be evaluated for payment. Therefore, <i>even if you do not know the correct answer with
+        certainty, we encourage you
         to submit the answer you consider most likely to be correct before the timeout.</i></p>
-<p>•	After you have submitted you answer to a question, you will be asked to indicate how likely it is that your
+<p>• After you have submitted you answer to a question, you will be asked to indicate how likely it
+    is that your
     chosen answer is correct (in %).</p>
-<p>•	You can earn an additional {{Constants.confidence_pay}} GBP for these estimates.</p>
+<p>• You can earn an additional {{Constants.confidence_pay}} GBP for these estimates.</p>
 
 <p>Please press the “Continue”-Button to proceed to the knowledge quiz. </p>
 
 
 
 <p>
-<button class="otree-btn-next btn btn-primary">Continue</button>
+    <button class="otree-btn-next btn btn-primary">Continue</button>
 </p>
 
 

@@ -1,0 +1,63 @@
+{% extends "global/Page.html" %}
+{% load otree static %}
+
+
+{% block title %}
+    Part 2 - Option to Seek Advice
+{% endblock %}
+
+
+{% block content %}
+
+<p><br> For each of the 10 questions, you can decide whether you want the computer to remove <b>3 incorrect answers</b>,
+    by clicking the "Advice"-button on the screen. When you see the two remaining answer options, you can then choose
+    the one you consider correct now. <b> One of the two remaining answer options is correct</b>. The answer you have chosen in
+    Part I is highlighted.</p>
+
+<p>The screenshots below show for an example question how the screen looks (1) on which you make your decision to seek advice or not for any
+    answer you just gave in part 1, and, (2) subsequently, when you decided to seek advice, i.e., three incorrect answer options are removed.
+    </p>
+
+<p> <b> Screen (1): Advice seeking decision </b>
+    </p>
+{% if player.participant.quiztype == 3 %}
+
+ <div style="text-align:center">
+<img src="{% static 'Employee/Example_SciTech3_revised.png' %}" width ="80%" />
+     </div>
+
+<p> <b> Screen (2): Remaining answers after seeking advice </b>
+    </p>
+
+ <div style="text-align:center">
+<img src="{% static 'Employee/Example_SciTech4.png' %}" width ="50%" />
+     </div>
+
+{% endif %}
+
+<p> If you decide to seek advice, you will have <b>{{Constants.timeout_advice}} seconds to submit your new answer</b>. If you timed out with no new
+    answer submitted, your initial answer form Part 1 will count for your payment.  </p>
+
+<p>If you do not want to seek advice on a question, you can proceed by clicking the “Continue”-Button instead. In this
+    case, you cannot revise your answer to that question.</p>
+
+
+<style>
+
+    .otree-btn-next {
+        width:150px;
+        border: 1px solid black;
+        background-color: #ffde00;
+        color: black;
+        float: right;
+    }
+
+</style>
+
+<p>
+<button class="otree-btn-next btn btn-primary">Continue</button>
+</p>
+
+
+
+{% endblock %}

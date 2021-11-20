@@ -15,7 +15,9 @@ See the oTree documentaion for this: https://otree.readthedocs.io/en/latest/inde
 
 
 # TODO:
-- [ ] integrate with actual project inlcuding functionality
-- [ ] settings.py has a list of all the varibles. Do this programmatically
+- [ ] integrate with actual project including functionality
+- [ ] Settings.py has a list of all the variables. Do this programmatically?
 - [ ] Answers are not stored yet
+- [ ] Layout of the choices (need to be buttons) positioned on the right
+- [ ] Class/Object for the CSV, or global. 
 - 

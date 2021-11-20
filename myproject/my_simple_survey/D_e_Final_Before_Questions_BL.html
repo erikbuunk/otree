@@ -1,0 +1,44 @@
+{% extends "global/Page.html" %}
+{% load otree static %}
+
+{% block title %}
+
+
+Part 2 - Summary
+
+
+{% endblock %}
+{% block content %}
+
+<p><br> You now have a chance to <i>seek advice and revise answers</i> to the previous questions. If
+    you seek advice on a question,
+    the computer removes 3 incorrect answers. You can then change the answer that you have submitted
+    in Part 1
+    to the answer that you consider correct now.</p>
+
+<p>You pay a fee of {{Constants.advice_cost}} GBP if you seek advice on a question.</p>
+
+<p>The computer determines whether you will be paid the high piece rate ({{Constants.high_pr}}) (80%
+    chance) or the low piece rate ({{Constants.low_pr}}) (20 % chance) for rewarding correct answers
+</p>
+
+
+<p> Please press the "Continue"-Button to proceed with Part 2. </p>
+
+
+<style>
+    .otree-btn-next {
+        width: 150px;
+        border: 1px solid black;
+        background-color: #ffde00;
+        color: black;
+        float: right;
+    }
+</style>
+
+<p>
+    <button class="otree-btn-next btn btn-primary">Continue</button>
+</p>
+
+
+{% endblock %}

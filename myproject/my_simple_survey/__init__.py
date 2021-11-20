@@ -16,8 +16,15 @@ Demo of Simple Survey with Images per Question
 
 # current directory name
 PROJECT_NAME = str(pathlib.Path(__file__).parent.absolute()).split(os.sep)[-1]
-HTML = join(PROJECT_NAME, "Pages")
+HTML = join(PROJECT_NAME, "")
 CSV = join(PROJECT_NAME, 'questions.csv')
+
+# prefixes in constants
+QUESTION = "q"
+TRUST = "trust_q"
+ADVICE = "advice_q"
+SEEK_ADVICE = "seek_advice_q"
+ADVICE_ELIMINATED = "advice_eliminated_q"
 
 
 # -------------HELPER FUNCTIONS -----------------
@@ -25,23 +32,23 @@ CSV = join(PROJECT_NAME, 'questions.csv')
 def read_csv(file_name=CSV):
     """Read the CSV file for pages and multiple choice options"""
     local_csv = []
-    with open(file_name) as csvfile:
-        file = csv.reader(csvfile, delimiter=';')
+    with open(file_name) as csv_file:
+        file = csv.reader(csv_file, delimiter=';')
         for i, line in enumerate(file):
-            tmpDict = {}
+            tmp_dict = {}
             if i == 0:
                 header = line
             else:
                 for j, f in enumerate(line):
-                    tmpDict[header[j]] = f
-            if tmpDict != {}:
-                local_csv.append(tmpDict)
+                    tmp_dict[header[j]] = f
+            if tmp_dict != {}:
+                local_csv.append(tmp_dict)
     return local_csv
 
 
 def eliminate_options(choices, correct_option):
     """
-    Keeps the correct choice and a random one
+    Keeps the correct choice and one other choice, randomly chosen
     """
     correct = choices.pop(int(correct_option))
     choices.pop(0)
@@ -49,8 +56,51 @@ def eliminate_options(choices, correct_option):
 
     eliminated = sorted([correct, random_option])
 
-    return (eliminated)
+    return eliminated
 
+
+def create_class(class_prefix, question_nr, base_class, form_fields_prefixes) -> object:
+    """
+    Since otree works with add classes (as opposed to instantiated objects
+    from the Class, this function create a Class with the formields as attributes
+    This function is creates to hide the special syntax
+
+    class_prefix (str):                 prefix used in the Class name and the form fields,
+                                            eg 'Question' -> Class name: Question_52
+    question_nr (str):                  identifier of the question, eg. 52
+    base_class (Class object):          the parent Class from which this class will inherit its properties. eg. Question
+    form_fields_prefixes (list of str): variables that will be created, question number will be added
+                                           eg. ["trust_q"] -> trust_q52
+    """
+    form_fields = [f"{ff_prefix}{question_nr}" for ff_prefix in form_fields_prefixes]
+    return type(f"{class_prefix}{question_nr}", (base_class,), {'form_fields': form_fields})
+
+def create_page_sequences():
+    """
+    Create 2 sequences of pages
+    The first is the initial Question + Trust Question
+    The second sequence is the the Question where advice can be asked
+    """
+    csv_file = read_csv()
+    sequence_1 = []
+    sequence_2 = []
+    for row in csv_file:
+        question_nr = row['question']
+
+        # First Round
+        # add survey field
+        sequence_1.append(create_class("Question", question_nr, Question, [QUESTION]))
+        # add Trust
+        sequence_1.append(create_class("Trust", question_nr, Trust, [TRUST]))
+
+        # Second Round
+        # Advice question
+        sequence_2.append(create_class("AdviceQuestion", question_nr, AdviceQuestion, [ADVICE, SEEK_ADVICE]))
+        # AdviceQuestionEliminated
+        sequence_2.append(
+            create_class("AdviceQuestionEliminated", question_nr, AdviceQuestionEliminated, [ADVICE_ELIMINATED]))
+
+    return (sequence_1, sequence_2)
 
 # FUNCTIONS
 def creating_session(subsession):
@@ -165,36 +215,35 @@ class Player(BasePlayer):
         choices=[["True", "True"], ["False", "False"]], blank=False
     )
 
-    #### Survey variables ---------------
+    #### CreateSurvey variables from CSV file---------------
     csv_data = read_csv()
     for row in csv_data:
         choices = [[0, "No Answer"], [1, row['A']], [2, row['B']], [3, row['C']], [4, row['D']], [5, row['E']]]
         question_nr = row['question']
         # q123
-        locals()[f"q{question_nr}"] = models.StringField(
+        locals()[f"{QUESTION}{question_nr}"] = models.StringField(
             choices=choices,
             widget=widgets.RadioSelectHorizontal,
             initial=0,
             label=row["label_text"]
         )
 
-        # trust_q123
-        locals()[f"trust_q{question_nr}"] = models.IntegerField(initial=0, \
+        # trust_q52
+        locals()[f"{TRUST}{question_nr}"] = models.IntegerField(initial=0, \
                                                                 label='I am ___ % certain that my answer is correct')
 
-        # # advice and eliminated
-        # # advice_q123
-        locals()[f"advice_q{question_nr}"] = models.StringField(
+        # # advice_q52
+        locals()[f"{ADVICE}{question_nr}"] = models.StringField(
             choices=choices,
             widget=widgets.RadioSelectHorizontal,
             initial=0,
             label=row["label_text"]
         )
-        # seek_advice_q123, initiliaze on 0
-        locals()[f"seek_advice_q{question_nr}"] = models.IntegerField(initial=0)
-        #
-        # # advice_q123_eliminated
-        locals()[f"advice_q{question_nr}_eliminated"] = models.StringField(
+        # seek_advice_q52, initiliaze on 0
+        locals()[f"{SEEK_ADVICE}{question_nr}"] = models.IntegerField(initial=0)
+
+        # advice_eliminated_q52
+        locals()[f"{ADVICE_ELIMINATED}{question_nr}"] = models.StringField(
             choices=eliminate_options(choices, row['answer']),
             widget=widgets.RadioSelectHorizontal,
             initial=0,
@@ -208,36 +257,7 @@ class Player(BasePlayer):
 
 
 
-# ----------------TEMPLATE PAGES-----------------------
-
-class Question(Page):
-    """
-    Template page for the questions
-    """
-    form_model = 'player'
-
-    # Base this page on the the template model
-    template_name = join(HTML, 'Question.html')
-
-    @staticmethod
-    def before_next_page(player: Player, timeout_happened):
-        """Update pagenumber and image to show"""
-        player.page_number = player.page_number + 1
-
-        # Check if we have enough images in the array
-        if player.page_number >= len(Constants.images):
-            player.image = "empty.jpg"
-        else:
-            player.image = Constants.images[player.page_number]
-
-    def vars_for_template(player):
-        """Return page number and image to the page as a variable
-        This can be used in the HTML Page"""
-        return dict(
-            page=player.page_number,
-            image=player.image
-        )
-
+# ----------------Pages-----------------------
 
 class A_a_Welcome1(Page):
     pass
@@ -292,27 +312,69 @@ class B_e_Final_Before_Questions(Page):
         if timeout_happened == True:
             participant.expiry = time.time() + Constants.answertime
 
-
-class Instructions(Page):
-    template_name = join(HTML, 'Instructions.html')
-
-
-class AdviceQuestion(Page):
-    template_name = join(HTML, 'AdviceQuestion.html')
+class Question(Page):
+    """
+    Template page for the questions
+    """
     form_model = 'player'
 
+    # Base this page on the the template model
+    template_name = join(HTML, 'C_a_Question.html')
 
-class AdviceQuestionEliminated(Page):
-    template_name = join(HTML, 'AdviceQuestionEliminated.html')
-    form_model = 'player'
+    @staticmethod
+    def before_next_page(player: Player, timeout_happened):
+        """Update pagenumber and image to show"""
+        player.page_number = player.page_number + 1
 
+        # Check if we have enough images in the array
+        if player.page_number >= len(Constants.images):
+            player.image = "empty.jpg"
+        else:
+            player.image = Constants.images[player.page_number]
+
+    def vars_for_template(player):
+        """Return page number and image to the page as a variable
+        This can be used in the HTML Page"""
+        return dict(
+            page=player.page_number,
+            image=player.image
+        )
 
 class Trust(Page):
     """
     Template for confidence page
     """
-    template_name = join(HTML, 'Trust.html')
+    template_name = join(HTML, 'C_b_Trust.html')
     form_model = 'player'
+
+class D_a_Advice_Instructions1(Page):
+    pass
+class D_b_Advice_Instructions2(Page):
+    pass
+class D_c_Advice_Instructions3_BL(Page):
+    pass
+class D_c_Advice_Instructions3_TM(Page):
+    pass
+class D_d_Advice_Comprehension_BL(Page):
+    pass
+class D_d_Advice_Comprehension_TM(Page):
+    pass
+class D_e_Final_Before_Questions_BL(Page):
+    pass
+class D_e_Final_Before_Questions_TM(Page):
+    pass
+
+class AdviceQuestion(Page):
+    template_name = join(HTML, 'E_a_AdviceQuestion.html')
+    form_model = 'player'
+
+
+class AdviceQuestionEliminated(Page):
+    template_name = join(HTML, 'E_b_AdviceQuestionEliminated.html')
+    form_model = 'player'
+
+class E_w_Payoffs(Page):
+    pass
 
 
 class ResultsWaitPage(WaitPage):
@@ -325,8 +387,9 @@ class Results(Page):
     pass
 
 
-# -------------- CONSTRUCT PAGES---------------------
-# initial pages
+# -------------- Page sequence ---------------------
+
+# Initial pages
 page_sequence = [
     A_a_Welcome1,
     A_b_Welcome2,
@@ -337,35 +400,23 @@ page_sequence = [
     B_e_Final_Before_Questions
 ]
 
-csv_file = read_csv()
-for row in csv_file:
-    # add survey field
-    question_nr = row['question']
-    form_fields = [f"q{question_nr}"]
-    ## Create a class with (name, template and a dictory of variables/functions)
-    cl = type(f"Page{question_nr}", (Question,), {'form_fields': form_fields})
-    page_sequence.append(cl)
+(first_sequence, second_sequence) = create_page_sequences()
+page_sequence.extend(first_sequence) # use extend because first sequence is a list
 
-    # add Trust
-    form_fields = [f"trust_q{question_nr}"]
-    cl = type(f"Trust{question_nr}", (Trust,), {'form_fields': form_fields})
-    page_sequence.append(cl)
+## Intermediate instructions
+page_sequence.extend([D_a_Advice_Instructions1,
+                 D_b_Advice_Instructions2,
+                 D_c_Advice_Instructions3_BL,
+                 D_c_Advice_Instructions3_TM,
+                 D_d_Advice_Comprehension_BL,
+                 D_d_Advice_Comprehension_TM,
+                 D_e_Final_Before_Questions_BL,
+                 D_e_Final_Before_Questions_TM])
 
-## inststructions
-page_sequence.append(Instructions)
-
-## Add advice sequence
-for row in csv_file:
-    # Advice question
-    question_nr = row['question']
-    form_fields = [f"advice_q{question_nr}", f"seek_advice_q{question_nr}"]
-    cl = type(f"AdviceQuestion{question_nr}", (AdviceQuestion,), {'form_fields': form_fields})
-    page_sequence.append(cl)
-
-    # AdviceQuestionEliminated
-    form_fields = [f"advice_q{question_nr}_eliminated"]
-    cl = type(f"AdviceQuestionEliminated{question_nr}", (AdviceQuestionEliminated,), {'form_fields': form_fields})
-    page_sequence.append(cl)
+## Second round with advice
+page_sequence.extend(second_sequence)
 
 # add additional pages
-page_sequence.append(Results)
+page_sequence.append(E_w_Payoffs)
+
+print(page_sequence)

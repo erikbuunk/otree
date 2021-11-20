@@ -1,0 +1,41 @@
+{% extends "global/Page.html" %}
+{% load otree static %}
+
+{% block title %}
+
+Part 2 - Summary
+
+
+{% endblock %}
+{% block content %}
+
+<p><br> You now have a chance to <i>seek advice and revise answers</i> to the previous questions. If
+    you seek advice on a question,
+    the computer removes 3 incorrect answers. You can then change the answer that you have submitted
+    in Part 1
+    to the answer that you consider correct now.</p>
+
+<p>You pay a fee of {{Constants.advice_cost}} GBP if you seek advice on a question.</p>
+
+<p>With your <i>decision to seek advice, you can also influence the chance that the computer selects
+        the high piece rate ({{Constants.high_pr}}) or the low piece rate ({{Constants.low_pr}}) for
+        rewarding correct answers</i>:
+    <ul>
+        <li> If you pass on the option to seek advice for <b><i>all 10 questions</i></b>, there is
+            an
+            80% chance that the computer selects the high piece rate and a 20% chance that the
+            computer selects the low piece
+            rate.
+        <li> If you seek advice on <b><i>at least one</i></b> question, this chance is lowered to
+            50%, making it equally likely that the
+            computer selects the high or the low piece rate for correct answers. </p>
+</ul>
+<p> Please press the "Continue"-Button to proceed with Part 2. </p>
+
+
+<p>
+    <button class="otree-btn-next btn btn-primary">Continue</button>
+</p>
+
+
+{% endblock %}

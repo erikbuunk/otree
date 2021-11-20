@@ -1,0 +1,112 @@
+{% extends "global/Page.html" %}
+{% load otree static %}
+
+{% block title %}
+
+
+        Comprehension Questions
+
+
+{% endblock %}
+
+{% block content %}
+
+<p><br> You will answer a few questions about the procedures just described. If you want to look up information in the
+    instructions, you can press the “Instructions ” button on the screen's bottom.</p>
+
+<p class="margin"> How many wrong answer options are removed if you seek advice for a question?</p>
+<input type="radio" name="q_comprehension4" value="1">
+1
+<input type="radio" name="q_comprehension4" value="2">
+2
+<input type="radio" name="q_comprehension4" value="3">
+3
+<input type="radio" name="q_comprehension4" value="4">
+4
+<input type="radio" name="q_comprehension4" value="5">
+5
+
+<p class="margin"> A person has sought advice on two questions. What is the chance, in %, that this
+    person receives the high piece rate? </p>
+<input type="radio" name="q_comprehensiont1" value="1">
+80%
+<input type="radio" name="q_comprehensiont1" value="2">
+40%
+<input type="radio" name="q_comprehensiont1" value="3">
+50%
+<input type="radio" name="q_comprehensiont1" value="4">
+70%
+
+<p> <br> Please press the "Continue"-Button to proceed. <br> </p>
+<p> </p>
+
+<p>
+<button class="otree-btn-next btn btn-primary">Continue</button>
+
+  <a class="btn btn-success" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+    Instructions
+  </a>
+</p>
+
+<div class="collapse" id="collapseExample">
+  <div class="card card-body">
+
+      <p>For each of the 10 questions, you can decide whether you want the computer to remove <b>3 incorrect answers</b>,
+    by clicking the button “Advice” on the screen. When you see the two remaining answer options, you can then choose
+    the one you consider correct now. One of the two remaining answer options is correct. The answer you have chosen in
+    Part I is highlighted.</p>
+
+    <p> If you decide to seek advice, you will have <b>{{Constants.timeout_advice}} seconds to submit your new answer</b>. If you timed out with no new
+    answer submitted, your initial answer form Part 1 will count for your payment.</p>
+
+    <p>If you do not want to seek advice on a question, you can proceed by clicking the “Proceed”-Button instead. In this
+    case, you cannot revise your answer to that question.</p>
+
+    <p>As announced, for each correct answer to a general knowledge question, you will be paid a piece rate of least
+    {{Constants.low_pr}} GBP. To receive this piece rate, it does not matter whether you submitted a correct answer right away
+    (in Part 1) or after you have sought advice (in Part 2). All that matters to obtain this piece rate is that you
+    ultimately submitted the correct answer to a question. </p>
+
+<p>For seeking advice there is a fee of {{Constants.advice_cost}} GBP per question. This fee will be deduced from your payment if you chose
+    the advice option even if you ended up not changing your initial answer. If you proceed to the next question without
+    seeking advice, you do not pay the fee. </p>
+
+<p>Seeking advice can also affect the piece rate for correct answers in the following way.</p>
+
+<p>The piece rate for correct answers is at least {{Constants.low_pr}} GBP but can also be higher: {{Constants.high_pr}} GBP per correct answer.
+    The computer determines whether you receive the low piece rate of {{Constants.low_pr}} GBP or the high piece rate of {{Constants.high_pr}} GBP per
+    correct answer as follows:</p>
+
+<p>If you <b><i>pass</i></b> on the option to seek advice for <b><i>all 10 questions</i></b>, it will be more likely that you will be paid the high
+    piece rate than the low piece rate. Specifically, 8 out of 10 times the computer will select the high piece rate and
+    2 out of 10 times, the computer will select the low piece rate. In other words, the chance of getting the high piece
+    rate will be 80%. </p>
+
+<p>If, instead, you <b><i>seek</i></b> advice on <b><i>at least one</i></b> question, it is equally likely that you will be paid the high piece rate
+    or the low piece rate. Specifically, 5 out of 10 times, the computer will select the high piece rate and 5 out of 10
+    times, the computer will select the low piece rate. In other words, the chance of getting the high piece rate will
+    be 50%. </p>
+
+<p>At the very end of today’s study, you will see an overview of your earnings and then find out whether the computer
+    selected the high piece rate or the low piece rate for you. </p>
+
+
+  </div>
+</div>
+
+<style>
+
+    .otree-btn-next {
+        width:150px;
+        border: 1px solid black;
+        background-color: #ffde00;
+        color: black;
+        float: right;
+    }
+
+</style>
+
+
+
+
+{% endblock %}

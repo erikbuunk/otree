@@ -1,0 +1,58 @@
+{% extends "global/Page.html" %}
+{% load otree static %}
+
+{% block title %}
+   Part 2 -  Advice and Payment
+{% endblock %}
+
+{% block content %}
+
+<p>As announced, for each correct answer to a general knowledge question, you will be paid a piece rate of least
+    {{Constants.low_pr}} GBP. To receive this piece rate, it does not matter whether you submitted a correct answer right away
+    (in Part 1) or after you have sought advice (in Part 2). <br>
+    All that matters <i> to obtain this piece rate is that you ultimately submitted the correct answer to a question</i>. </p>
+
+<p>For seeking advice there is an <b>advice fee</b> of <b>{{Constants.advice_cost}}</b> GBP per question. This fee will be deduced from your payment if you chose
+    the advice option even if you ended up not changing your initial answer. If you proceed to the next question without
+    seeking advice, you do not pay the fee. </p>
+
+<p><i>Seeking advice can also affect the piece rate for correct answers in the following way:</i></p>
+
+<p>The <b>piece rate</b> for correct answers is at least <b>{{Constants.low_pr}}</b> GBP but can also be higher: <b>{{Constants.high_pr}}</b> GBP per correct answer.
+    The <i>computer</i> determines whether you receive the low piece rate of {{Constants.low_pr}} GBP or the high piece rate of {{Constants.high_pr}} GBP per
+    correct answer as follows:</p>
+
+<p>If you <b><i>pass</i></b> on the option to seek advice for <b><i>all 10 questions</i></b>, it will be <b><i>more likely</i></b> that you will be paid the high
+    piece rate than the low piece rate. Specifically, 8 out of 10 times the computer will select the high piece rate and
+    2 out of 10 times, the computer will select the low piece rate. In other words, the chance of getting the high piece
+    rate will be <i><b>80%</i></b>. </p>
+
+<p>If, instead, you <b><i>seek advice</i></b> on <b><i>at least one</i></b> question, it is <b><i>equally likely</i></b> that you will be paid the high piece rate
+    or the low piece rate. Specifically, 5 out of 10 times, the computer will select the high piece rate and 5 out of 10
+    times, the computer will select the low piece rate. In other words, the chance of getting the high piece rate will
+    be <i><b>50%</i></b>. </p>
+
+<p>At the very end of today’s study, you will see an overview of your earnings and then find out whether the computer
+    selected the high piece rate or the low piece rate for you. </p>
+
+<p> Please press the "Continue"-Button to proceed. </p>
+
+<style>
+
+    .otree-btn-next {
+        width:150px;
+        border: 1px solid black;
+        background-color: #ffde00;
+        color: black;
+        float: right;
+    }
+
+</style>
+
+<p>
+<button class="otree-btn-next btn btn-primary">Continue</button>
+</p>
+
+
+
+{% endblock %}
